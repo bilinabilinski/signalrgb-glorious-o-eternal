@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readProfileRequest, buildStaticConfig} from './eternal_preset.mjs';
+assert.deepEqual([...readProfileRequest(0)],[5,17,0,0,0,0]);
+const input=new Uint8Array(520);input[0]=4;input[7+33]=0xa7;
+const result=buildStaticConfig({readback:input, red:15,green:125,blue:255});
+assert.equal(result.length,520);
+assert.deepEqual([...result.slice(0,4)],[4,17,0,123]);
+assert.equal(result[53],2);assert.equal(result[56],0x42);
+assert.deepEqual([...result.slice(57,60)],[15,255,125]);
+assert.equal(result[61],1);assert.equal(result[8+33],0xa7);
+assert.throws(()=>buildStaticConfig({readback:new Uint8Array(520),red:1,green:1,blue:1}));
+console.log('OFFLINE PASS: packet size, profile, static color RBG, brightness, preservation, validation');
