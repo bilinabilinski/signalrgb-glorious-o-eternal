@@ -25,6 +25,7 @@ export function ConflictingProcesses() { return ["Glorious Core.exe"]; }
 const endpoints = {};
 const EFFECTS = { "Static": 2, "Breathing": 3, "Wave": 9, "Glorious Mode": 1, "Off": 0 };
 let attempted = false;
+let armedAfterOff = false;
 
 export function Validate(ep) {
     const valid = ep.interface === 1 && ep.usage === 1 &&
@@ -109,12 +110,14 @@ function buildReport(readback, profileId) {
 
 export function Initialize() {
     attempted=false;
+    armedAfterOff=false;
     device.log("Eternal v0.5: hardware preset available ONLY after manual Apply. No PC-driven RGB streaming.");
 }
 export function Render() {
     // Render never sends data unless the user explicitly toggles Apply.
     // A process-wide one-shot prevents writes on every frame.
-    if (!EternalApplyOnce || attempted) return;
+    if (!EternalApplyOnce) { armedAfterOff=true; return; }
+    if (!armedAfterOff || attempted) return; // no auto-write on restart with saved ON
     attempted=true; // set BEFORE any USB action; never auto retry
     try {
         // Force parameter validation before issuing any USB traffic.
