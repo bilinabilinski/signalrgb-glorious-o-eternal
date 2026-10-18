@@ -22,10 +22,15 @@ function run({apply=false, reportValid=true, bothEndpoints=true, repeat=2}={}) {
   assert.equal(context.api.VendorId(),0x3794);
   assert.equal(context.api.ProductId(),0xa000);
   context.api.Initialize();
+  context.EternalApplyOnce=false; context.api.Render(); // arm only after observing OFF
+  context.EternalApplyOnce=apply;
   for(let i=0;i<repeat;i++)context.api.Render();
   context.api.Shutdown();
   return calls;
 }
+// ON already persisted at startup must not trigger a write until OFF -> ON.
+const persistedOn=run({apply:true,repeat:0});
+assert.equal(persistedOn.filter(e=>e[0]==='send').length,0);
 const off=run({apply:false});
 assert.equal(off.filter(e=>e[0]==='send').length,0,'off: USB must be silent');
 const good=run({apply:true});
