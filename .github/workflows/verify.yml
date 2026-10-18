@@ -1,0 +1,17 @@
+name: Verify SignalRGB Eternal
+on:
+  push:
+    branches: [main, experimental-core-hid-one-shot]
+  pull_request:
+jobs:
+  offline-hid-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node test_plugin.cjs
+      - run: node protocol/eternal_preset.test.mjs
