@@ -67,3 +67,9 @@ The offsets and method sequence above are reverse-engineered from the locally su
 ## Implementation gate
 
 `Glorious_Model_O_Eternal_Wired.js` intentionally has **no USB writes**. Only once an independently validated live-RGB report is available should transport be added, with paced latest-frame-only output and automatic disable on errors.
+
+## Hardware observation — 2026-10-18
+
+User-reported experiment (not independently hardware-verified): after setting static RGB color `#7900FF` in Glorious CORE, fully quitting CORE and SignalRGB, disconnecting USB for 10 seconds, and reconnecting, the mouse **still displayed `#7900FF`**.
+
+Interpretation: strong evidence that the preset is stored in nonvolatile mouse-side storage (or otherwise survives complete USB power interruption). This experiment does **not** determine EEPROM vs flash nor prove that every HID lighting write causes an additional physical write cycle. As a precaution, treat report-ID 4 configuration writes as potentially persistent and **never use them for 30/60 FPS streaming**. Pursue proof of an independent volatile RGB transport.
