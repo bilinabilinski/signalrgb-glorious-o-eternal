@@ -1,5 +1,12 @@
 # SignalRGB — Glorious Model O Eternal Wired
 
+## Stan integracji z SignalRGB (2026-10-18)
+
+**UWAGA: mysz jest wykrywana, ale animacje SignalRGB na fizycznych diodach nie działają.** Samo dodanie repozytorium w **Usługach zewnętrznych / Dodatkach** nie instaluje obsługi USB LED. Kod na `main` to diagnostyka pobierania klatek Canvas, bez USB output. Eksperyment z jednorazowym sprzętowym presetem jest w [PR #1](https://github.com/bilinabilinski/signalrgb-glorious-o-eternal/pull/1), a nie na `main`; nie jest to sterownik animacji.
+
+Analiza oficjalnego Glorious CORE: `rgbSync: true` jest flagą modelu, lecz w `MouseOEternalDeviceHandler` znaleziono jedynie zapis konfiguracji profilu HID (raport 5 → odczyt 4 → zapis 4), nie zweryfikowany protokół nietrwałych zmian koloru. Kolor zachowuje się po odłączeniu USB. **Nie wysyłaj raportów konfiguracji w pętli 30/60 FPS.** Postępy śledzimy w [issue #2](https://github.com/bilinabilinski/signalrgb-glorious-o-eternal/issues/2).
+
+
 **Stan: wersja diagnostyczna v0.4.0. Fizyczne animacje RGB nie działają jeszcze.**
 
 To **osobny projekt** od `signalrgb-tuya-razer-bilina`. Tamto repozytorium nie jest modyfikowane.
