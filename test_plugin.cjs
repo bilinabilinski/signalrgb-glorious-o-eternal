@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const source = fs.readFileSync(__dirname + '/Glorious_Model_O_Eternal_Wired.js','utf8').replace(/export function /g,'function ');
-function run({apply=false, reportValid=true, bothEndpoints=true, repeat=2}={}) {
+function run({apply=false, reportValid=true, bothEndpoints=true, repeat=2,arm=true}={}) {
   const calls=[];
   const device={
     log:m=>calls.push(['log',String(m)]),
@@ -22,14 +22,14 @@ function run({apply=false, reportValid=true, bothEndpoints=true, repeat=2}={}) {
   assert.equal(context.api.VendorId(),0x3794);
   assert.equal(context.api.ProductId(),0xa000);
   context.api.Initialize();
-  context.EternalApplyOnce=false; context.api.Render(); // arm only after observing OFF
+  if(arm) { context.EternalApplyOnce=false; context.api.Render(); } // arm only after observing OFF
   context.EternalApplyOnce=apply;
   for(let i=0;i<repeat;i++)context.api.Render();
   context.api.Shutdown();
   return calls;
 }
 // ON already persisted at startup must not trigger a write until OFF -> ON.
-const persistedOn=run({apply:true,repeat:0});
+const persistedOn=run({apply:true,arm:false});
 assert.equal(persistedOn.filter(e=>e[0]==='send').length,0);
 const off=run({apply:false});
 assert.equal(off.filter(e=>e[0]==='send').length,0,'off: USB must be silent');
